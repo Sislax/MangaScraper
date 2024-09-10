@@ -2,19 +2,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MangaScraper.Models.Settings;
-using MangaScraper.Interfaces;
-using MangaScraper.Services;
-using MangaScraper.Data;
-using Microsoft.EntityFrameworkCore;
-using MangaScraper.Interfaces.RepoInterfaces;
-using MangaScraper.Repositories;
+using System.Net;
 
 namespace MangaScraper
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -27,9 +21,6 @@ namespace MangaScraper
             })
             .ConfigureServices(services =>
             {
-                services.AddDbContext<AppDbContext>(
-                    o => o.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
                 services.AddLogging(logging =>
                     logging.AddSimpleConsole(options =>
                     {
@@ -38,29 +29,32 @@ namespace MangaScraper
                         options.TimestampFormat = "yyyy/MM/d HH:mm:ss:fff";
                     }));
 
-                services.AddSingleton<ISeleniumService, SeleniumService>();
-
-                //PER LE MIGRATION HO BISOGNO DI AGGIUNGERE QUESTI SERVIZI COME SCOPED INVECE CHE SINGLETON
-                //ALTRIMENTI RICEVO UN ERRORE QUANDO CERCO DI CREARE UNA NUOVA MIGRATION IN QUANTO APPDBCONTEXT VIENE USATO COME SCOPED -> VERIFICARE LA CORRETTEZZA
-                services.AddScoped<IMangaScraperService, MangaScraperService>();
-                services.AddScoped<IMangaRepository, MangaRepository>();
-                services.AddScoped<IGenereRepository, GenereRepository>();
-
+                services.AddSingleton<HttpRequestMangaScraperApi>();
                 services.AddSingleton<Settings>();
                 services.AddSingleton(configuration);
             })
             .Build();
 
-            IMangaScraperService scraper = host.Services.GetRequiredService<IMangaScraperService>();
+            HttpRequestMangaScraperApi request = host.Services.GetRequiredService<HttpRequestMangaScraperApi>();
 
-            scraper.Operate();
+            string empty = host.Services.GetRequiredService<Settings>().empty;
+
+            using(HttpClient client = new HttpClient())
+            {
+                if (empty == "true")
+                {
+                    await request.RequestOperate(client);
+                }
+                else
+                {
+                    await request.RequestUpdate(client);
+                }
+            }
 
             Console.ReadKey();
 
-            //TODO:.... AGGIUNGERE FUNZIONI DI AGGIORNAMENTO -> Se "empty" = true in appsettings.json eseguire metodo Operate() in quanto indica che il database è completamente vuoto
-            //                                                  Se "empty" = false eseguire metodo Update() (DA CREARE) per aggiornare il database in quanto sono già presenti alcuni dati
-            //                                                      Per il metodo Update() -> aggiungere campo nel db chiamato Data_Update e confrontarla con le ultime aggiunte sul sito
-            //                                                      Eseguire l'update while(Data_Update < data nuova aggiunta)
+            //TODO:.... IMPLEMETARE IL METODO UPDATE() NELL'API
+            //          IMPLEMENTARE UI CON BLAZOR
         }
     }
 }
