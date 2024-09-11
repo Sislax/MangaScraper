@@ -31,7 +31,7 @@ namespace MangaScraper.Services
             try
             {
                 //Aggiungo l'estensione AdBlock
-                options.AddExtensions(settings.adBlockExtensionLocation);
+                options.AddExtensions(settings.AdBlockExtensionLocation);
 
                 //Rimuovo il pop-up per impostare il motore di ricerca predefinito
                 options.AddArgument("--disable-search-engine-choice-screen");
@@ -43,7 +43,7 @@ namespace MangaScraper.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("ERRORE: estensione non trovata nella posizione: {settings.adBlockExtensionLocation}. {ex}", settings.adBlockExtensionLocation, ex);
+                _logger.LogError("ERRORE: estensione non trovata nella posizione: {settings.adBlockExtensionLocation}. {ex}", settings.AdBlockExtensionLocation, ex);
                 throw;
             }
         }
@@ -62,15 +62,14 @@ namespace MangaScraper.Services
         }
 
         //Metodo per ottenere le pagine dell'archivio. Per ogni pagina dell'archivio troviamo 16 manga.
-        private IEnumerable<string> GetArchivePageUrls(Settings settings)
+        private IEnumerable<string> GetArchivePageUrls(Settings settings, int nPages)
         {
             try
             {
                 List<string> urls = new List<string>();
 
-                int nPages = settings.nPagine;
-                string baseUrl = settings.baseUrl;
-                string param = settings.nextPageParamArchive;
+                string baseUrl = settings.BaseUrl;
+                string param = settings.NextPageParamArchive;
 
                 for (int i = 0; i < nPages; i++)
                 {
@@ -108,12 +107,13 @@ namespace MangaScraper.Services
             }
         }
 
-        private IEnumerable<Manga> CreateManga(IWebDriver driver)
+        //Metodo che crea la lista dei manga con tutte le info
+        private IEnumerable<Manga> CreateManga(IWebDriver driver, int nPages)
         {
             try
             {
                 //Ottengo gli url di tutte le pagine dell'archivio che mi interessano
-                List<string> archivePageUrls = GetArchivePageUrls(_settings).ToList();
+                List<string> archivePageUrls = GetArchivePageUrls(_settings, nPages).ToList();
 
                 List<Manga> mangas = new List<Manga>();
 
@@ -259,6 +259,7 @@ namespace MangaScraper.Services
         {
             List<string> urlsCapitoliString = urlsCapitoli.ToList();
 
+            //Dato che "/" non è ammesso nel nome delle cartelle lo sostuisco con "-" 
             Regex pattern = new Regex("[/]");
             string newMangaName = pattern.Replace(manga.Nome, "-");
 
@@ -272,7 +273,7 @@ namespace MangaScraper.Services
                 _selenium.GoToUrl(urlsCapitoliString[i], driver);
 
                 //Creo la cartella del manga se non esiste già
-                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.folderForImages + $"//{newMangaName}");
+                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//{newMangaName}");
 
                 //Creo la cartella del capitolo se non esiste già
                 DirectoryInfo chapterFolder = Directory.CreateDirectory($"{mangaFolder.FullName}" + $"//Capitolo {i + 1}");
@@ -319,7 +320,7 @@ namespace MangaScraper.Services
                     .Last().Text;
 
                 //Creo la cartella del manga se non esiste già
-                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.folderForImages + $"//{newMangaName}");
+                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//{newMangaName}");
 
                 //Creo la cartella del volume se non esiste già
                 DirectoryInfo volumeFolder = Directory.CreateDirectory($"{mangaFolder.FullName}" + $"//{numVolume}");
@@ -380,7 +381,7 @@ namespace MangaScraper.Services
                 _selenium.GoToUrl(urlsCapitoliString[i], driver);
 
                 //Creo la cartella del manga se non esiste già
-                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.folderForImages + $"//{newMangaName}");
+                DirectoryInfo mangaFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//{newMangaName}");
 
                 //Ottengo il numero delle pagine del capitolo dalla dropdown nella pagina
                 IWebElement pagineDropDown = _selenium.FindElementByClassName("page", driver);
@@ -408,7 +409,7 @@ namespace MangaScraper.Services
             }
         }
 
-        public async Task Operate()
+        public async Task Operate(int nPages)
         {
             IWebDriver driver = StartMangaScraping();
 
@@ -424,7 +425,7 @@ namespace MangaScraper.Services
             driver.Manage().Window.Maximize();
 
             //Estraggo le info dei manga da ogni pagina dell'archivio e creo gli oggetti di dominio
-            List<Manga> mangas = CreateManga(driver).ToList();
+            List<Manga> mangas = CreateManga(driver, nPages).ToList();
 
             HttpClient downloader = new HttpClient();
 

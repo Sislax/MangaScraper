@@ -15,7 +15,7 @@ namespace MangaScraper
 
         public async Task RequestOperate(HttpClient client)
         {
-            string url = _settings.apiUrl + _settings.endPointOperate;
+            string url = _settings.ApiUrl + _settings.EndPointOperate + "/" + _settings.NPagine;
 
             try
             {
@@ -45,7 +45,7 @@ namespace MangaScraper
             try
             {
                 // Effettua la chiamata POST all'API
-                HttpResponseMessage response = await client.PostAsync(_settings.apiUrl + _settings.endPointUpdate, null);
+                HttpResponseMessage response = await client.PostAsync(_settings.ApiUrl + _settings.EndPointUpdate, null);
 
                 // Verifica se la risposta ha avuto successo (status code 2xx)
                 if (response.IsSuccessStatusCode)

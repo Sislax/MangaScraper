@@ -32,5 +32,6 @@ I dubbi al momento sono alcuni:
 ## Future implementazioni
 
 Al momento il progetto svolge la funzione di riempire un database vuoto con tutta la lista dei manga trovati sul sito (ne sono davvero molti).
-In futuro verrà implementata la funzione di aggiornamento che controllerà le nuove uscite sul sito e le aggiungerà al database.
+In futuro verrà implementata la funzione di aggiornamento che controllerà le nuove uscite sul sito e le aggiungerà al database. UPDATE:
+ -> Dato che il sito non contiene una struttura uniforme per i nuovi capitoli aggiunti (alcuni sono mostrati nelle nuove uscite ma altri mancano, ad esempio i più famosi non ci sono), non si può effettuare un'aggiornamento efficiente, ad esempio conservando la data degli inserimenti sul database e confrontare quel valore con la data degli ultimi aggiornamenti sul sito. Di conseguenza l'update verrà fatto in maniera inefficiente, ricontrollando tutti i manga con stato "in corso" e confrontando il numero dei capitoli su database con quello sul sito (da valutare la procedura migliore per faro).
 Verrà implementata anche una UI per la consultazione dei manga.

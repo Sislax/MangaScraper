@@ -16,11 +16,11 @@ namespace MangaScraperApi.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
-        public IActionResult ScrapeFromScratch()
+        [HttpPost("{nPages}")]
+        public IActionResult ScrapeFromScratch(int nPages)
         {
             // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping (in base alla quantità di pagine) potrebbe durare anche una o due ore
-            BackgroundJob.Enqueue(() => ScrapeFromScratchTask());
+            BackgroundJob.Enqueue(() => ScrapeFromScratchTask(nPages));
 
             return Accepted();
         }
@@ -36,11 +36,11 @@ namespace MangaScraperApi.Controllers
 
         // Il metodo deve per forza essere public per essere eseguito in background quindi lo faccio ignorare da Swagger
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void ScrapeFromScratchTask()
+        public void ScrapeFromScratchTask(int nPages)
         {
             try
             {
-                _mangaScraperService.Operate();
+                _mangaScraperService.Operate(nPages);
 
                 _logger.LogInformation("Operazione di scraping effettuata con successo");
             }

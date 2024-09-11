@@ -37,7 +37,7 @@ namespace MangaScraper
 
             HttpRequestMangaScraperApi request = host.Services.GetRequiredService<HttpRequestMangaScraperApi>();
 
-            string empty = host.Services.GetRequiredService<Settings>().empty;
+            string empty = host.Services.GetRequiredService<Settings>().Empty;
 
             using(HttpClient client = new HttpClient())
             {
