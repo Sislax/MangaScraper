@@ -17,46 +17,21 @@ namespace MangaScraperApi.Controllers
         }
 
         [HttpPost("{nPages}")]
-        public IActionResult ScrapeFromScratch(int nPages)
+        public IActionResult ScrapeUpdate(int nPages)
         {
             // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping (in base alla quantità di pagine) potrebbe durare anche una o due ore
-            BackgroundJob.Enqueue(() => ScrapeFromScratchTask(nPages));
-
-            return Accepted();
-        }
-
-        [HttpPost]
-        public IActionResult ScrapeUpdate()
-        {
-            // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping (in base alla quantità di pagine) potrebbe durare anche una o due ore
-            BackgroundJob.Enqueue(() => ScrapeUpdateTask());
+            BackgroundJob.Enqueue(() => ScrapeUpdateTask(nPages));
 
             return Accepted();
         }
 
         // Il metodo deve per forza essere public per essere eseguito in background quindi lo faccio ignorare da Swagger
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void ScrapeFromScratchTask(int nPages)
+        public async Task ScrapeUpdateTask(int nPages)
         {
             try
             {
-                _mangaScraperService.Operate(nPages);
-
-                _logger.LogInformation("Operazione di scraping effettuata con successo");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Errore nel tentativo di eseguire l'operazione di ottenimento/inserimento dati nel database, {ex}", ex);
-            }
-        }
-
-        // Il metodo deve per forza essere public per essere eseguito in background quindi lo faccio ignorare da Swagger
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public void ScrapeUpdateTask()
-        {
-            try
-            {
-                _mangaScraperService.Update();
+                await _mangaScraperService.Update(nPages);
 
                 _logger.LogInformation("Operazione di scraping effettuata con successo");
             }

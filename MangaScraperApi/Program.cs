@@ -5,6 +5,7 @@ using MangaScraperApi.Interfaces.RepoInterfaces;
 using MangaScraperApi.Interfaces.ServiceInterfaces;
 using MangaScraperApi.Models.Settings;
 using MangaScraperApi.Repositories;
+using MangaScraperApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,8 +39,8 @@ builder.Services.AddHangfireServer();
 
 builder.Services.AddScoped<IMangaScraperService, MangaScraperService>();
 builder.Services.AddSingleton<ISeleniumService, SeleniumService>();
-builder.Services.AddScoped<IMangaRepository, MangaRepository>();
-builder.Services.AddScoped<IGenereRepository, GenereRepository>();
+builder.Services.AddScoped<IAppRepository, AppRepository>();
+builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddSingleton<Settings>();
 builder.Services.AddSingleton(configuration);
 

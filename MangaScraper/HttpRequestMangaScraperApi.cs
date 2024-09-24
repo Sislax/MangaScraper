@@ -13,9 +13,9 @@ namespace MangaScraper
             _logger = logger;
         }
 
-        public async Task RequestOperate(HttpClient client)
+        public async Task RequestUpdate(HttpClient client)
         {
-            string url = _settings.ApiUrl + _settings.EndPointOperate + "/" + _settings.NPagine;
+            string url = _settings.ApiUrl + _settings.EndPointUpdate + "/" + _settings.NPagine;
 
             try
             {
@@ -25,38 +25,11 @@ namespace MangaScraper
                 // Verifica se la risposta ha avuto successo (status code 2xx)
                 if (response.IsSuccessStatusCode)
                 {
-                    // Legge il contenuto della risposta
-                    var responseBody = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformation("Risposta API: {responseBody}", responseBody);
+                    _logger.LogInformation("Status Code risposta API: {response.StatusCode.ToString()}", response.StatusCode.ToString());
                 }
                 else
                 {
-                    _logger.LogError("Errore nella chiamata API: {response.StatusCode}", response.StatusCode);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Errore di comunicazione con l'API. Eccezione: {ex}", ex);
-            }
-        }
-
-        public async Task RequestUpdate(HttpClient client)
-        {
-            try
-            {
-                // Effettua la chiamata POST all'API
-                HttpResponseMessage response = await client.PostAsync(_settings.ApiUrl + _settings.EndPointUpdate, null);
-
-                // Verifica se la risposta ha avuto successo (status code 2xx)
-                if (response.IsSuccessStatusCode)
-                {
-                    // Legge il contenuto della risposta
-                    var responseBody = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformation("Risposta API: {responseBody}", responseBody);
-                }
-                else
-                {
-                    _logger.LogError("Errore nella chiamata API: {response.StatusCode}", response.StatusCode);
+                    _logger.LogWarning("Errore nella chiamata API: {response.StatusCode}", response.StatusCode);
                 }
             }
             catch (Exception ex)

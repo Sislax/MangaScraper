@@ -37,24 +37,12 @@ namespace MangaScraper
 
             HttpRequestMangaScraperApi request = host.Services.GetRequiredService<HttpRequestMangaScraperApi>();
 
-            string empty = host.Services.GetRequiredService<Settings>().Empty;
-
             using(HttpClient client = new HttpClient())
             {
-                if (empty == "true")
-                {
-                    await request.RequestOperate(client);
-                }
-                else
-                {
-                    await request.RequestUpdate(client);
-                }
+                await request.RequestUpdate(client);
             }
 
             Console.ReadKey();
-
-            //TODO:.... IMPLEMETARE IL METODO UPDATE() NELL'API
-            //          IMPLEMENTARE UI CON BLAZOR
         }
     }
 }

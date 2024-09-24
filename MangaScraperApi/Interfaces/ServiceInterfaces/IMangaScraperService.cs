@@ -2,7 +2,6 @@
 {
     public interface IMangaScraperService
     {
-        public Task Operate(int nPages);
-        public void Update();
+        public Task Update(int nPages);
     }
 }

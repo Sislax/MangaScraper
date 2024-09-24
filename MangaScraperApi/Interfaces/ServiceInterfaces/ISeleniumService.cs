@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using MangaScraperApi.Models.Settings;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
 namespace MangaScraperApi.Interfaces.ServiceInterfaces
@@ -11,6 +12,7 @@ namespace MangaScraperApi.Interfaces.ServiceInterfaces
          */
         public IWebDriver CreateChromeDriver();
         public IWebDriver CreateChromeDriver(ChromeOptions options);
+        public ChromeOptions CreateChromeOptions(Settings settings);
         public void QuitDriver(IWebDriver driver);
         public void GoToUrl(string url, IWebDriver driver);
         public IWebElement FindElementByClassName(string className, IWebDriver driver);
@@ -29,5 +31,6 @@ namespace MangaScraperApi.Interfaces.ServiceInterfaces
         public string GetAttributeOfElementByClassName(string className, string attribute, IWebDriver driver);
         public string GetAttributeOfElementByClassName(string className, string attribute, IWebElement element);
         public void Click(IWebElement element);
+        public void Refresh(IWebDriver driver);
     }
 }

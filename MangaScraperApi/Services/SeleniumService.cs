@@ -1,5 +1,5 @@
 ﻿using MangaScraperApi.Interfaces.ServiceInterfaces;
-using Microsoft.Extensions.Logging;
+using MangaScraperApi.Models.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
@@ -23,14 +23,39 @@ namespace MangaScraper.Services
         {
             try
             {
-                return new ChromeDriver(options);
+                return new ChromeDriver(/*ChromeDriverService.CreateDefaultService(),*/ options/*, TimeSpan.FromMinutes(1)*/);
             }
             catch (Exception ex)
             {
                 _logger.LogError("ERRORE durante la creazione del driver {ex}", ex);
                 throw;
             }
-            
+        }
+
+        public ChromeOptions CreateChromeOptions(Settings settings)
+        {
+            ChromeOptions options = new ChromeOptions();
+            try
+            {
+                //Aggiungo l'estensione AdBlock
+                options.AddExtensions(settings.AdBlockExtensionLocation);
+
+                //Rimuovo il pop-up per impostare il motore di ricerca predefinito
+                options.AddArgument("--disable-search-engine-choice-screen");
+                //options.AddArgument("--headless");
+                options.AddArgument("--no-sandbox");
+                //options.AddArgument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36");
+
+                //Per qualche motivo ricevo in console errori sul certificato anche se la connessione è sicura.
+                //options.AcceptInsecureCertificates = true;
+
+                return options;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE: estensione non trovata nella posizione: {settings.adBlockExtensionLocation}. {ex}", settings.AdBlockExtensionLocation, ex);
+                throw;
+            }
         }
 
         public void QuitDriver(IWebDriver driver)
@@ -38,6 +63,7 @@ namespace MangaScraper.Services
             try
             {
                 driver.Quit();
+                driver.Dispose();
                 _logger.LogInformation("Chiusura del driver avvenuta con succeso");
             }
             catch (Exception ex)
@@ -269,6 +295,19 @@ namespace MangaScraper.Services
             catch (Exception ex)
             {
                 _logger.LogError("ERRORE durante il click dell'elemento: {element}. {ex}", element, ex);
+                throw;
+            }
+        }
+
+        public void Refresh(IWebDriver driver)
+        {
+            try
+            {
+                driver.Navigate().Refresh();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE durante il refresh della pagina. {ex}", ex);
                 throw;
             }
         }
