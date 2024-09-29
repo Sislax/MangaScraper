@@ -74,7 +74,7 @@ namespace MangaScraperApi.Services
         }
 
         //Metodo che crea la lista dei manga con tutte le info
-        private IEnumerable<Manga> CreateManga(IWebDriver driver, int nPages, List<Genere> genereList)
+        private async Task<List<Manga>> CreateManga(IWebDriver driver, int nPages, List<Genere> genereList)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace MangaScraperApi.Services
 
                     //Costruisco i manga con le informazioni trovate nella pagina.
                     //I manga contengono anche gli url alla pagina del singolo manga
-                    mangas = GetInfoManga(driver, genereList).ToList();
+                    mangas = await GetInfoManga(driver, genereList);
                 }
 
                 return mangas;
@@ -130,14 +130,17 @@ namespace MangaScraperApi.Services
         }
 
         //Metodo che viene utilizzato quando ci troviamo nella pagina dell'archivio per prendere le informazioni dei manga presenti in quella pagina
-        private IEnumerable<Manga> GetInfoManga(IWebDriver driver, List<Genere> genereList)
+        private async Task<List<Manga>> GetInfoManga(IWebDriver driver, List<Genere> genereList)
         {
             try
             {
                 List<Manga> mangas = new List<Manga>();
 
                 //Metodo tramite il quale otteniamo i <div> contenenti le informazioni dei manga sulla pagina dell'archivio
-                IEnumerable<IWebElement> mangaGrid = _selenium.FindElementsByClassName("content", driver);
+                IEnumerable<IWebElement> mangaGrid = _selenium.FindElementsByClassName("entry", driver);
+
+                //Regex per "/" nel nome del manga
+                Regex pattern = new Regex("[/]");
 
                 foreach (IWebElement mangaInfo in mangaGrid)
                 {
@@ -147,6 +150,19 @@ namespace MangaScraperApi.Services
 
                     //Ottengo l'Url del manga
                     string url = _selenium.GetAttribute("href", a_Name);
+
+                    //Ottengo il percorso dell'immagine di copertina
+                    IWebElement a_Copertina = _selenium.FindElementByClassName("thumb", mangaInfo);
+                    IWebElement imgCopertina = _selenium.FindElementByTagName("img", a_Copertina);
+                    string copertinaUrl = _selenium.GetAttribute("src", imgCopertina);
+
+                    string newMangaName = pattern.Replace(nome, "-");
+
+                    //Creo la cartella delle copertine se non esiste già
+                    DirectoryInfo copertineFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//Copertine");
+
+                    //Scarico la copertina del manga e la salvo nell'apposita cartella
+                    await DownloadImgs(copertinaUrl, copertineFolder.FullName + $"\\{newMangaName}.jpg");
 
                     //Ottengo il tipo del manga
                     IWebElement div_Tipo = _selenium.FindElementByClassName("genre", mangaInfo);
@@ -183,7 +199,7 @@ namespace MangaScraperApi.Services
                         generi.Add(genereList.Find(g => g.NameId == genereName) ?? throw new Exception());
                     }
 
-                    Manga manga = new Manga(nome, url, tipo, stato, autore, artista, trama);
+                    Manga manga = new Manga(nome, copertineFolder.FullName + $"\\{newMangaName}", url, tipo, stato, autore, artista, trama);
 
                     //Imposto la lista dei generi trovati come proprietà di navigazione del manga
                     manga.Generi = generi;
@@ -381,7 +397,7 @@ namespace MangaScraperApi.Services
                         capitolo.ImgPositions.Add(new ImagePosition(chapterFolder.FullName + $"\\{newMangaName}" + $"{numCapitolo}_img{j + 1}.jpg", capitolo.Id));
 
                         //Aspetto due secondi prima di cliccare
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1000);
 
                         _selenium.FindElementByClassName("page-next", driver).Click();
                     }
@@ -442,7 +458,7 @@ namespace MangaScraperApi.Services
                         capitolo.ImgPositions.Add(new ImagePosition(mangaFolder.FullName + $"\\{newMangaName}_img{j + 1}.png", capitolo.Id));
 
                         //Aspetto due secondi prima di cliccare
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1000);
 
                         _selenium.FindElementByClassName("page-next", driver).Click();
                     }
@@ -556,7 +572,7 @@ namespace MangaScraperApi.Services
                 //Estraggo le info dei manga da ogni pagina dell'archivio e creo gli oggetti di dominio
                 //Faccio quest'operazione perchè nel caso un manga non venga trovato sul db lo devrò aggiungere, quindi sacrifico delle prestazione per mantenere un po' più chiaro il codice
                 //Perchè anche se il manga è già su db devo comunque estrarre delle info per controllare che su db ci siano tutti i capitoli. Ciò che faccio è solamente estrarre delle info in più
-                List<Manga> mangas = CreateManga(driver, nPages, genereList).ToList();
+                List<Manga> mangas = await CreateManga(driver, nPages, genereList);
 
                 bool dbEmpty = !mangaToCompareList.Any();
 

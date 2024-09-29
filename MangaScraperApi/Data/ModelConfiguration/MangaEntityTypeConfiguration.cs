@@ -27,6 +27,7 @@ namespace MangaScraperApi.Data.ModelConfiguration
 
             builder.Property(m => m.Id);
             builder.Property(m => m.Nome);
+            builder.Property(m => m.CopertinaUrl);
             builder.Property(m => m.Url);
             builder.Property(m => m.Tipo);
             builder.Property(m => m.Stato);
