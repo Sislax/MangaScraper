@@ -29,7 +29,7 @@ Di seguito i problemi riscontrati nel progetto:
 - **RISOLTO USANDO UN SOLO WORKER DI HANGFIRE (FORSE NON OTTIMALE)** --> **Hangfire**: in alcune occasioni, esegue il job più volte senza motivo apparente. Questo comportamento è casuale: a volte il job viene messo in coda due volte, altre quattro, o si avvia nuovamente dopo 5-10 minuti. Alcuni utenti hanno riscontrato lo stesso problema e hanno trovato workaround, ma non una soluzione definitiva. Riavviando l'applicazione, il problema spesso scompare.
   [Link alla discussione sul problema](https://github.com/HangfireIO/Hangfire/issues/1025)
 
-- **RISOLTO!** --> Problema con **Selenium**: dopo un certo tempo di esecuzione (10-20 minuti o più), Selenium si blocca e lancia l'eccezione seguente:
+- **RISOLTO! REQUEST TROPPO VELOCI E VENIVA BLOCCATO L'IP CREDO. AGGIUNTI Thread.Sleep() PER RITARDARE LE RICHIESTE** --> Problema con **Selenium**: dopo un certo tempo di esecuzione (10-20 minuti o più), Selenium si blocca e lancia l'eccezione seguente:
 
     ```text
     OpenQA.Selenium.WebDriverException: The HTTP request to the remote WebDriver server for URL http://localhost:51696/session/.../click timed out after 60 seconds.
@@ -43,51 +43,6 @@ Di seguito i problemi riscontrati nel progetto:
 
 	Il problema si verifica nei metodi `GetManga/Manhwa/OneshotChapterImages()`, solitamente al momento del click. Nei log, sembra che il click avvenga correttamente e la pagina del WebDriver cambi, ma Selenium non rileva il cambiamento e continua ad aspettare, fino al timeout.
 
-	Un esempio del metodo problematico:
-
-	```C#
-	for (int j = 0; j < nPagine; j++)
-	{
-    	//Avviene qualche blocco ogni tanto, credo dovuto al server che si blocca per le troppe richieste consecutive, quindi applico una logica di retry
-    	int retries = 3; // Numero di tentativi di retry
-    	int delay = 1000; // Tempo di ritardo iniziale in millisecondi
-
-    	for (int z = 0; z < retries; z++)
-    	{
-        	try
-        	{
-            	//Estraggo l'immagine
-            	string urlImg = _selenium.GetAttributeOfElementByClassName("img-fluid", "src", imgDiv);
-
-            	//Salvo l'immagine nell'apposita cartella, chiamando il file con: nomeDelManga + numeroVolume + numeroCapitolo + numeroImmagineCapitolo.jpg
-            	await DownloadImgs(urlImg, chapterFolder.FullName + $"\\{newMangaName}" + $"Capitolo{i + 1}_img{j + 1}.jpg"); //<-- **QUESTO METODO NON LANCIA ECCEZIONE**
-
-            	capitolo.ImgPositions.Add(new ImagePosition(chapterFolder.FullName + $"\\{newMangaName}" + $"Capitolo{i + 1}_img{j + 1}.jpg", capitolo.Id));
-
-            	_selenium.FindElementByClassName("page-next", driver).Click();
-
-            	_logger.LogInformation("SUCCESSO: Try {z}", z);
-
-            	break; // Esco dal ciclo di retry se il download ha avuto successo
-        	}
-        	catch (Exception ex)
-        	{
-            	_logger.LogError("ERRORE: Ottenimento immagine fallito nel try {z}. {ex}", z, ex); //<-- **QUESTO METODO LANCIA QUESTO MESSAGGIO MA ANCHE IL RETRY FALLISCE COME SI VEDE DALL'ECCEZIONE SUCCESSIVA**
-        	}
-
-        	if(z == retries - 1)
-        	{
-            	throw new Exception("ERRORE: Retry esauriti per l'ottenimento dell'immagine.");
-        	}
-
-        	// Ritardo tra un tentativo e l'altro con backoff esponenziale
-        	await Task.Delay(delay);
-        	delay *= 2; // Aumento il ritardo con backoff esponenziale
-
-        	_selenium.Refresh(driver);
-    	}
-	}
-	```
 
 
 ## Dubbi sul progetto
