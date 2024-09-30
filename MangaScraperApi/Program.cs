@@ -35,7 +35,10 @@ builder.Services.AddLogging(logging =>
 
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer(options =>
+{
+    options.WorkerCount = 1;
+});
 
 builder.Services.AddScoped<IMangaScraperService, MangaScraperService>();
 builder.Services.AddSingleton<ISeleniumService, SeleniumService>();

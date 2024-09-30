@@ -18,15 +18,15 @@ Mi piacerebbe ricevere feedback sull'implementazione e sulla struttura del proge
 
 - **Aggiornamento dei dati**: se il database è già popolato e ci sono nuove uscite sul sito, queste verranno aggiunte automaticamente durante l'esecuzione. Poiché non esiste una pagina che mostra solo le nuove uscite, è necessario riciclare l'archivio e confrontare i dati con quelli presenti nel database. Ora non è più necessaria la distinzione tra il metodo `Operate()` (che veniva usato per un database vuoto) e `Update()` (per aggiornare i dati esistenti).
 
-- Creata un'**API** per gestire la comunicazione con il database, separando così la console app dal contatto diretto con il database.
-
 - Aggiunti **endpoint** in previsione della futura implementazione di una UI.
+
+- Creata un'**API** per gestire la comunicazione con il database, separando così la console app dal contatto diretto con il database.
 
 ## Problemi attuali
 
 Di seguito i problemi riscontrati nel progetto:
 
-- **Hangfire**: in alcune occasioni, esegue il job più volte senza motivo apparente. Questo comportamento è casuale: a volte il job viene messo in coda due volte, altre quattro, o si avvia nuovamente dopo 5-10 minuti. Alcuni utenti hanno riscontrato lo stesso problema e hanno trovato workaround, ma non una soluzione definitiva. Riavviando l'applicazione, il problema spesso scompare.
+- **RISOLTO USANDO UN SOLO WORKER DI HANGFIRE (FORSE NON OTTIMALE)** --> **Hangfire**: in alcune occasioni, esegue il job più volte senza motivo apparente. Questo comportamento è casuale: a volte il job viene messo in coda due volte, altre quattro, o si avvia nuovamente dopo 5-10 minuti. Alcuni utenti hanno riscontrato lo stesso problema e hanno trovato workaround, ma non una soluzione definitiva. Riavviando l'applicazione, il problema spesso scompare.
   [Link alla discussione sul problema](https://github.com/HangfireIO/Hangfire/issues/1025)
 
 - **RISOLTO!** --> Problema con **Selenium**: dopo un certo tempo di esecuzione (10-20 minuti o più), Selenium si blocca e lancia l'eccezione seguente:

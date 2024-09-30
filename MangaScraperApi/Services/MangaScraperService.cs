@@ -397,7 +397,7 @@ namespace MangaScraperApi.Services
                         capitolo.ImgPositions.Add(new ImagePosition(chapterFolder.FullName + $"\\{newMangaName}" + $"{numCapitolo}_img{j + 1}.jpg", capitolo.Id));
 
                         //Aspetto due secondi prima di cliccare
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
 
                         _selenium.FindElementByClassName("page-next", driver).Click();
                     }
@@ -458,7 +458,7 @@ namespace MangaScraperApi.Services
                         capitolo.ImgPositions.Add(new ImagePosition(mangaFolder.FullName + $"\\{newMangaName}_img{j + 1}.png", capitolo.Id));
 
                         //Aspetto due secondi prima di cliccare
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
 
                         _selenium.FindElementByClassName("page-next", driver).Click();
                     }
@@ -628,7 +628,6 @@ namespace MangaScraperApi.Services
                                 newUrlsList.Add(urlsCapitoli[i]);
                             }
 
-                            //Utilizzo lo stesso switch utilizzato prima ma con la nuova lista di url
                             //Passo il manga presente su db
                             await GetChapterImgs(newUrlsList, driver, existingManga);
 
