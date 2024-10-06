@@ -636,8 +636,7 @@ namespace MangaScraperApi.Services
                     }
                 }
 
-                driver.Quit();
-                driver.Dispose();
+                _selenium.QuitDriver(driver);
             }
             catch (Exception ex)
             {
