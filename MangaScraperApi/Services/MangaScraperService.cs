@@ -50,13 +50,12 @@ namespace MangaScraperApi.Services
                 List<string> urls = new List<string>();
 
                 string baseUrl = settings.BaseUrl;
-                string param = settings.NextPageParamArchive;
 
                 for (int i = 0; i < nPages; i++)
                 {
                     if (i > 0)
                     {
-                        urls.Add($"{baseUrl}{param}{i + 1}");
+                        urls.Add($"{baseUrl}?page={i + 1}");
                     }
                     else
                     {
@@ -636,6 +635,9 @@ namespace MangaScraperApi.Services
                         }
                     }
                 }
+
+                driver.Quit();
+                driver.Dispose();
             }
             catch (Exception ex)
             {
