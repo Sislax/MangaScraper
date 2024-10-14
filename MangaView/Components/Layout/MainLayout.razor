@@ -1,0 +1,51 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <NavMenu/>
+    </MudDrawer>
+
+    <MudThemeProvider Theme="MyTheme" />
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex justify-center">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+
+@code {
+    bool _drawerOpen = false;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    MudTheme MyTheme = new MudTheme()
+        {
+            Typography = new Typography()
+            {
+                H1 = new H1()
+                {
+                    FontFamily = new[] { "FrederickatheGreat", "NotoSansJP", "PottaOne", "ZenKurenaido", "Bangers" },
+                    FontSize = "1.5rem"
+                }
+            }
+        };
+}

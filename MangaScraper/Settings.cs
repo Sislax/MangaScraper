@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace MangaScraper
+namespace MangaScraperApi
 {
     public class Settings
     {

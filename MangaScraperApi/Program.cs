@@ -1,12 +1,11 @@
 using Hangfire;
-using MangaScraper.Services;
-using MangaScraperApi.Data;
-using MangaScraperApi.Interfaces.RepoInterfaces;
+using MangaScraperApi.Services;
 using MangaScraperApi.Interfaces.ServiceInterfaces;
 using MangaScraperApi.Models.Settings;
-using MangaScraperApi.Repositories;
-using MangaScraperApi.Services;
 using Microsoft.EntityFrameworkCore;
+using MangaScraper.Data.Data;
+using MangaScraper.Data.Interfaces;
+using MangaScraper.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,6 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
     .Build();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,8 +58,11 @@ app.UseHangfireDashboard("/hangfire");
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
+
+//app.UseAuthentication();
 
 app.MapControllers();
+    //.RequireAuthorization();
 
 app.Run();

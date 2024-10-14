@@ -3,7 +3,7 @@ using MangaScraperApi.Models.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace MangaScraper.Services
+namespace MangaScraperApi.Services
 {
     public class SeleniumService : ISeleniumService
     {

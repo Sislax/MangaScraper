@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace MangaScraper
+namespace MangaScraperApi
 {
     public class Program
     {

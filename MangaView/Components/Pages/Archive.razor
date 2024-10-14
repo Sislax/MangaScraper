@@ -1,0 +1,38 @@
+﻿@page "/archive"
+@using MangaView.Interfaces
+@using MangaView.Models
+@inject IMangaService _mangaService;
+
+<PageTitle>Archive</PageTitle>
+
+<MudGrid>
+@foreach(MangaDTO manga in MangaList)
+{
+	<MudItem xs="12" sm="6">
+		<MudCard>
+			<MudCardContent>
+					<MudCardMedia Image="@GetUrlForCopertina(manga.Id)" Style="object-fit:contain"></MudCardMedia>
+			</MudCardContent>
+			<MudCardContent>
+				<MudText>@manga.Nome</MudText>
+			</MudCardContent>
+		</MudCard>
+	</MudItem>
+}
+</MudGrid>
+
+@code {
+	private List<MangaDTO> MangaList = new List<MangaDTO>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		MangaList = await _mangaService.GetAllMangas();
+	}
+
+	private string GetUrlForCopertina(int id)
+	{
+		return $"https://localhost:7171/api/Manga/GetCopertina?id={id}";
+	}
+}

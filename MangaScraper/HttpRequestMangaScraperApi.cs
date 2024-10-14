@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace MangaScraper
+namespace MangaScraperApi
 {
     public class HttpRequestMangaScraperApi
     {

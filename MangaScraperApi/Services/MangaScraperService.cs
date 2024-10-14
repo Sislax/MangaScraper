@@ -1,12 +1,12 @@
 ﻿using MangaScraperApi.Interfaces.ServiceInterfaces;
-using MangaScraperApi.Interfaces.RepoInterfaces;
-using MangaScraperApi.Models.Domain;
 using MangaScraperApi.Models.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Text.RegularExpressions;
-using MangaScraperApi.Models;
 using OpenQA.Selenium.Support.UI;
+using MangaScraper.Data.Interfaces;
+using MangaScraper.Data.Models.Domain;
+using MangaScraper.Data.Models.Utiles;
 
 namespace MangaScraperApi.Services
 {
