@@ -11,10 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Api", "MangaSc
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaView", "MangaView\MangaView.csproj", "{92FD8772-E398-4300-AEBA-8DE7E0F92E40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D5D5F8C-BAE9-48E2-B865-0C94536F0615} = {1D5D5F8C-BAE9-48E2-B865-0C94536F0615}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaScraper.Data", "MangaScraper.Data\MangaScraper.Data.csproj", "{1D5D5F8C-BAE9-48E2-B865-0C94536F0615}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Data", "MangaScraper.Data\MangaScraper.Data.csproj", "{1D5D5F8C-BAE9-48E2-B865-0C94536F0615}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaView.Api", "MangaView.Api\MangaView.Api.csproj", "{A1FBB655-D11F-45A2-8BCC-C5D342B87E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaView.Api", "MangaView.Api\MangaView.Api.csproj", "{A1FBB655-D11F-45A2-8BCC-C5D342B87E42}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1D5D5F8C-BAE9-48E2-B865-0C94536F0615} = {1D5D5F8C-BAE9-48E2-B865-0C94536F0615}
 	EndProjectSection

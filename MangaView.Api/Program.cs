@@ -32,6 +32,7 @@ builder.Services.AddLogging(logging =>
 
 builder.Services.AddScoped<IAppRepository, AppRepository>();
 builder.Services.AddScoped<IMangaService, MangaService>();
+builder.Services.AddSingleton<IImageSharpService, ImageSharpService>();
 
 var app = builder.Build();
 

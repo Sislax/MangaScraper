@@ -9,7 +9,7 @@ namespace MangaScraper.Data.Interfaces
         public Task<IEnumerable<Manga>> GetMangasAsync();
         public Task<string> GetCopertinaMangaByIdAsync(int idManga);
         public Task<IEnumerable<Manga>> GetMangasWithAllDataAsync();
-        public Task<Manga> GetMangaWithAllDataAsync(string nomeManga);
+        public Task<Manga> GetMangaWithAllDataAsync(int id);
         public Task<IEnumerable<Manga>> GetMangasWithGeneriAsync();
         public Task<Manga> GetMangaWithGeneriAsync(string nomeManga);
         public Task<Manga> GetMangaByIdAsync(int id);

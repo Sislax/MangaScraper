@@ -1,4 +1,4 @@
-﻿namespace MangaView.Models
+﻿namespace MangaView.Utiles
 {
 	public class Settings
 	{

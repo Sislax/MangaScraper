@@ -1,7 +1,5 @@
 using MangaView.Components;
-using MangaView.Interfaces;
-using MangaView.Models;
-using MangaView.Services;
+using MangaView.Utiles;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +15,6 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IMangaService, MangaService>();
 builder.Services.AddSingleton<Settings>();
 builder.Services.AddSingleton(clientConfiguration);
 

@@ -8,11 +8,13 @@ namespace MangaView.Api.Controllers
     public class MangaController : ControllerBase
     {
         public readonly IMangaService _mangaService;
+        public readonly IImageSharpService _imageSharpService;
         public readonly ILogger<MangaController> _logger;
 
-        public MangaController(IMangaService mangaService, ILogger<MangaController> logger)
+        public MangaController(IMangaService mangaService, IImageSharpService imageSharpService, ILogger<MangaController> logger)
         {
             _mangaService = mangaService;
+            _imageSharpService = imageSharpService;
             _logger = logger;
         }
 
@@ -31,6 +33,20 @@ namespace MangaView.Api.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetMangaDTOWithAllDataAsync(int id)
+        {
+            try
+            {
+                return Ok(await _mangaService.CreateMangaDTOWithData(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile restituire il mangaDTO. {ex}", ex);
+                throw;
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetCopertinaAsync(int id)
         {
             try
@@ -42,9 +58,10 @@ namespace MangaView.Api.Controllers
                     return NotFound();
                 }
 
-                var fileStream = new FileStream(copertinaPath, FileMode.Open, FileAccess.Read);
-
-                return File(fileStream, "image/jpeg");
+                using (FileStream fileStream = new FileStream(copertinaPath, FileMode.Open, FileAccess.Read))
+                {
+					return File(_imageSharpService.ResizeImage(fileStream, 640, 920), "image/jpeg");
+				}
             }
             catch (Exception ex)
             {

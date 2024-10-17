@@ -14,4 +14,8 @@
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MangaScraper.Data\MangaScraper.Data.csproj" />
+  </ItemGroup>
+
 </Project>

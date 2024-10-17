@@ -8,6 +8,12 @@
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer/>
+        <div style="display: flex; justify-content: flex-start; align-items: center;">
+            <input type="text" name="search-bar" placeholder=" Cerca..." @bind-value="_text" style="width: 280px; height: 30px; border-radius: 2px" />
+            <MudIconButton Icon="@Icons.Material.Filled.Search" />
+        </div>
+        
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenu/>
@@ -31,6 +37,7 @@
 
 @code {
     bool _drawerOpen = false;
+    string _text = "";
 
     void DrawerToggle()
     {
@@ -43,7 +50,7 @@
             {
                 H1 = new H1()
                 {
-                    FontFamily = new[] { "FrederickatheGreat", "NotoSansJP", "PottaOne", "ZenKurenaido", "Bangers" },
+                    FontFamily = new[] { /*"FrederickatheGreat", "NotoSansJP", "PottaOne", "ZenKurenaido",*/ "Bangers" },
                     FontSize = "1.5rem"
                 }
             }

@@ -1,22 +1,31 @@
 ﻿@page "/archive"
-@using MangaView.Interfaces
-@using MangaView.Models
-@inject IMangaService _mangaService;
+@using MangaScraper.Data.Models.DTOs
+@using MangaView.Utiles
+@inject HttpClient _httpClient;
+@inject Settings _settings;
+@inject NavigationManager _navigationManager
 
 <PageTitle>Archive</PageTitle>
-
+	
 <MudGrid>
-@foreach(MangaDTO manga in MangaList)
-{
-	<MudItem xs="12" sm="6">
-		<MudCard>
-			<MudCardContent>
-					<MudCardMedia Image="@GetUrlForCopertina(manga.Id)" Style="object-fit:contain"></MudCardMedia>
-			</MudCardContent>
-			<MudCardContent>
-				<MudText>@manga.Nome</MudText>
-			</MudCardContent>
-		</MudCard>
+	@foreach(MangaDTO manga in MangaList)
+	{
+		
+	<MudItem xs="6">
+			<MudPaper Class="d-flex justify-center mud-width-full py-8" Style="width: 444px; height: 450px">
+			<MudItem Class="d-flex mud-width-full py-8" Style="display: flex; flex-direction: column; align-items: flex-start;">
+				<MudCardMedia Image="@GetUrlForCopertina(manga.Id)" Style="width: 240px; height: 345px;"></MudCardMedia>
+			</MudItem>
+			<MudItem Class="d-flex mud-width-full py-8" Style="display: flex; flex-direction: column; align-items: start;">
+				<MudLink Color="Color.Dark" @onclick="() => GoToPaginaManga(manga.Id)"><strong>@manga.Nome</strong></MudLink>
+				<MudDivider />
+				<MudText><strong>Tipo:</strong> @manga.Tipo</MudText>
+				<MudText><strong>Stato:</strong> @manga.Stato</MudText>
+				<MudText><strong>Autore:</strong> @manga.Autore</MudText>
+				<MudText><strong>Artista:</strong> @manga.Artista</MudText>
+				<MudText><strong>Trama:</strong> @manga.Trama</MudText>
+			</MudItem>
+		</MudPaper>
 	</MudItem>
 }
 </MudGrid>
@@ -28,7 +37,12 @@
 	{
 		await base.OnInitializedAsync();
 
-		MangaList = await _mangaService.GetAllMangas();
+		MangaList = await _httpClient.GetFromJsonAsync<List<MangaDTO>>(_settings.ApiUrl + "Manga/GetMangaDTOs") ?? throw new Exception();
+	}
+
+	private void GoToPaginaManga(int mangaId)
+	{
+		_navigationManager.NavigateTo($"/{mangaId}");
 	}
 
 	private string GetUrlForCopertina(int id)

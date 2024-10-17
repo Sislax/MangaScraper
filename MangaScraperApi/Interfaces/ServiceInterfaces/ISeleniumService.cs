@@ -6,10 +6,6 @@ namespace MangaScraperApi.Interfaces.ServiceInterfaces
 {
     public interface ISeleniumService
     {
-        /*
-         * Cercando di seguire i SOLID PRINCIPLES mi trovo a dover creare quest'astrazione che però mi crea dubbi sulla correttezza in quanto i metodi da implementare in ogni classe sono molti
-         * LEGGERE FILE README PER MAGGIORI SPIEGAZIONI SUI DUBBI
-         */
         public IWebDriver CreateChromeDriver();
         public IWebDriver CreateChromeDriver(ChromeOptions options);
         public ChromeOptions CreateChromeOptions(Settings settings);

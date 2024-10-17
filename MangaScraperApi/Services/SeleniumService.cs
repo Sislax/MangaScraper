@@ -23,7 +23,7 @@ namespace MangaScraperApi.Services
         {
             try
             {
-                return new ChromeDriver(/*ChromeDriverService.CreateDefaultService(),*/ options/*, TimeSpan.FromMinutes(1)*/);
+                return new ChromeDriver(options);
             }
             catch (Exception ex)
             {

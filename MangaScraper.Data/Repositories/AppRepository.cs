@@ -66,7 +66,7 @@ namespace MangaScraper.Data.Repositories
             }
         }
 
-        public async Task<Manga> GetMangaWithAllDataAsync(string nomeManga)
+        public async Task<Manga> GetMangaWithAllDataAsync(int id)
         {
             try
             {
@@ -75,7 +75,9 @@ namespace MangaScraper.Data.Repositories
                     .ThenInclude(v => v.Capitoli)
                     .ThenInclude(c => c.ImgPositions)
                     .Include(m => m.Generi)
-                    .FirstAsync(m => m.Nome == nomeManga);
+                    .AsNoTracking()
+                    .AsSplitQuery()
+                    .FirstAsync(m => m.Id == id);
             }
             catch (Exception ex)
             {
