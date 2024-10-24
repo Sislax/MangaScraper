@@ -47,7 +47,7 @@ namespace MangaView.Api.Services
                     imageDTOList.Add(CreateImageDTO(imgPosition));
                 }
 
-                return new CapitoloDTO(capitolo.NumCapitolo, imageDTOList);
+                return new CapitoloDTO(capitolo.Id, capitolo.NumCapitolo, imageDTOList);
 			}
 			catch (Exception ex)
 			{
@@ -152,6 +152,31 @@ namespace MangaView.Api.Services
                 throw;
             }
         }
-    }
 
+        public async Task<Capitolo> GetCapitoloByIdAsync(int capitoloId)
+        {
+            try
+            {
+                return await _appRepository.GetCapitoloWithDataByIdAsync(capitoloId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile recuperare il capitolo con id: {capitoloId}. {ex}", capitoloId, ex);
+                throw;
+            }
+        }
+
+        public async Task<string> GetPathImgAsync(int imgId)
+        {
+            try
+            {
+                return await _appRepository.GetPathImageByIdAsync(imgId);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile ottenere il percorso dell'immagine con id: {imgId}. {ex}", imgId, ex);
+                throw;
+            }
+        }
+    }
 }

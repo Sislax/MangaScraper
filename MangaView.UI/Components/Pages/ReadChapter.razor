@@ -1,0 +1,56 @@
+﻿@page "/read/{capitoloId:int}"
+@using MangaScraper.Data.Models.DTOs
+@using MangaView.UI.Utiles
+@inject HttpClient _httpClient;
+@inject Settings _settings;
+
+<PageTitle>Lettura Capitolo</PageTitle>
+
+<MudImage Src="@GetCurrentImage()" Style="align-self: center; align-content: center"></MudImage>
+
+<MudButton OnClick="() => SelectNextImage()">Next Page</MudButton>
+<MudButton OnClick="() => SelectPrevImage()">Previus Page</MudButton>
+
+@code {
+	[Parameter]
+	public int capitoloId { get; set; }
+
+	public required CapitoloDTO _capitoloDTO = new CapitoloDTO();
+	public required ImageDTO _imageDTO = new ImageDTO();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		_capitoloDTO = await _httpClient.GetFromJsonAsync<CapitoloDTO>(_settings.ApiUrl + $"Manga/GetCapitoloDTOWithData?id={capitoloId}") ?? throw new Exception();
+		_imageDTO = _capitoloDTO.ImgPositions.First();
+
+		await base.OnInitializedAsync();
+	}
+
+	private string GetCurrentImage()
+	{
+		return _settings.ApiUrl + $"Manga/GetImageFromImageId?id={_imageDTO.Id}";
+	}
+
+	private void SelectNextImage()
+	{
+		int currentIndex = _capitoloDTO.ImgPositions.IndexOf(_imageDTO);
+
+		if(currentIndex < _capitoloDTO.ImgPositions.Count - 1)
+		{
+			_imageDTO = _capitoloDTO.ImgPositions.ElementAt<ImageDTO>(_capitoloDTO.ImgPositions.IndexOf(_imageDTO) + 1);
+		}
+		
+	}
+
+	private void SelectPrevImage()
+	{
+		int currentIndex = _capitoloDTO.ImgPositions.IndexOf(_imageDTO);
+
+		if(currentIndex > 0)
+		{
+			_imageDTO = _capitoloDTO.ImgPositions.ElementAt<ImageDTO>(currentIndex - 1);
+		}
+		
+	}
+}

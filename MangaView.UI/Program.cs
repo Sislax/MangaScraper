@@ -1,5 +1,5 @@
-using MangaView.Components;
-using MangaView.Utiles;
+using MangaView.UI.Components;
+using MangaView.UI.Utiles;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

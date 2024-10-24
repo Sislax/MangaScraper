@@ -1,0 +1,40 @@
+﻿@using MangaScraper.Data.Models.DTOs;
+@using MangaView.UI.Utiles
+@inject NavigationManager _navigationManager;
+@inject Settings _settings;
+
+
+<MudPaper Class="d-flex justify-center mud-width-full py-8" Style="max-width: 444px; height: 500px">
+	<MudItem Class="d-flex mud-width-full py-8 mr-4" Style="display: flex; flex-direction: column; align-items: flex-start;">
+		<MudCardMedia Image="@GetCopertina(manga.Id)" Style="width: 240px; height: 345px;"></MudCardMedia>
+	</MudItem>
+	<MudItem Class="d-flex mud-width-full py-8" Style="display: flex; flex-direction: column; align-items: start;">
+		<MudLink Color="Color.Dark" @onclick="() => GoToPaginaManga(manga.Id)"><strong>@manga.Nome</strong></MudLink>
+		<MudDivider />
+		<MudText><strong>Tipo:</strong> @manga.Tipo</MudText>
+		<MudText><strong>Stato:</strong> @manga.Stato</MudText>
+		<MudText><strong>Autore:</strong> @manga.Autore</MudText>
+		<MudText><strong>Artista:</strong> @manga.Artista</MudText>
+		<MudText>
+			<strong>Generi:</strong>
+			@string.Join(", ", manga.Generi.Select(genere => genere.NomeGenere))
+		</MudText>
+		<MudText Class="text-overflow" Style="overflow: hidden; text-overflow: ellipsis;"><strong>Trama:</strong> @manga.Trama</MudText>
+	</MudItem>
+</MudPaper>
+
+@code {
+
+	[Parameter]
+	public required MangaDTO manga { get; set; }
+
+	private void GoToPaginaManga(int mangaId)
+	{
+		_navigationManager.NavigateTo($"/{mangaId}");
+	}
+
+	private string GetCopertina(int id)
+	{
+		return _settings.ApiUrl + $"Manga/GetCopertina?id={id}";
+	}
+}

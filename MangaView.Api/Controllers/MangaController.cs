@@ -1,4 +1,5 @@
-﻿using MangaView.Api.Interfaces;
+﻿using MangaScraper.Data.Models.Domain;
+using MangaView.Api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MangaView.Api.Controllers
@@ -66,6 +67,47 @@ namespace MangaView.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("ERRORE: impossibile restituire la copertina del manga. {ex}", ex);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCapitoloDTOWithDataAsync(int id)
+        {
+            try
+            {
+                Capitolo capitolo = await _mangaService.GetCapitoloByIdAsync(id);
+
+                return Ok(_mangaService.CreateCapitoloDTO(capitolo));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile restituire il capitoloDTO dal capitolo con id: {id}. {ex}", id, ex);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetImageFromImageId(int id)
+        {
+            try
+            {
+                string imagePath = await _mangaService.GetPathImgAsync(id);
+
+				if (!System.IO.File.Exists(imagePath))
+				{
+					return NotFound();
+				}
+
+                FileStream fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+				
+				return File(fileStream, "image/jpeg");
+				
+
+			}
+            catch(Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile restituire l'immagine con id: {id}. {ex}", id, ex);
                 throw;
             }
         }

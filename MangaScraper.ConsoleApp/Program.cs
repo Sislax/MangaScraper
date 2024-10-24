@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace MangaScraperApi
+namespace MangaScraper.ConsoleApp
 {
     public class Program
     {
@@ -37,7 +37,7 @@ namespace MangaScraperApi
 
             HttpRequestMangaScraperApi request = host.Services.GetRequiredService<HttpRequestMangaScraperApi>();
 
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 await request.RequestUpdate(client);
             }

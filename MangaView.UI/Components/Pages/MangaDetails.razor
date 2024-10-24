@@ -1,0 +1,71 @@
+﻿@page "/{mangaId:int}"
+@using MangaScraper.Data.Models.DTOs;
+@using MangaView.UI.Components.Layout
+@using MangaView.UI.Utiles
+@inject HttpClient _httpClient;
+@inject Settings _settings;
+@inject NavigationManager _navigationManager;
+
+<PageTitle>Manga Details</PageTitle>
+
+<InfoMangaComponent manga="_mangaDTO"></InfoMangaComponent>
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        @if (_mangaDTO.Volumi.Count != 1 && _volumeDTO.NumVolume != "Volume Fittizio")
+        {
+            <MudExpansionPanels>
+                <MudExpansionPanel Text="@_volumeDTO.NumVolume" Expanded="false">
+                    @foreach (VolumeDTO volume in _mangaDTO.Volumi)
+                    {
+                        <MudLink @onclick="() => SelectCurrentVolume(volume)">@volume.NumVolume</MudLink>
+                        <MudDivider />
+                    }
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudExpansionPanels>
+            <MudExpansionPanel Text="@_capitoloDTO.NumCapitolo" Expanded="false">
+
+                @foreach (CapitoloDTO capitolo in _volumeDTO.Capitoli)
+                {
+                    <MudLink @onclick="() => NavigateToChapterPage(capitolo.Id)">@capitolo.NumCapitolo</MudLink>
+                    <MudDivider />
+                }
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+
+    [Parameter]
+    public int mangaId { get; set; }
+
+    public required MangaDTO _mangaDTO = new MangaDTO();
+    public required VolumeDTO _volumeDTO = new VolumeDTO();
+    public required CapitoloDTO _capitoloDTO = new CapitoloDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _mangaDTO = await _httpClient.GetFromJsonAsync<MangaDTO>(_settings.ApiUrl + $"Manga/GetMangaDTOWithAllData?id={mangaId}") ?? throw new Exception();
+        _volumeDTO = _mangaDTO.Volumi.First();
+        _capitoloDTO = _volumeDTO.Capitoli.First();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void SelectCurrentVolume(VolumeDTO selectedVolume)
+    {
+        _volumeDTO = selectedVolume;
+    }
+
+    private void NavigateToChapterPage(int chapterId)
+    {
+        _navigationManager.NavigateTo($"/read/{chapterId}");
+    }
+}

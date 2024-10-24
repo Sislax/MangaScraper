@@ -38,7 +38,10 @@
       "commandName": "Executable",
       "workingDirectory": "$(ProjectDir)",
       "executablePath": "dotnet",
-      "commandLineArgs": "watch run debug --launch-profile https"
+      "commandLineArgs": "watch run debug --launch-profile https",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

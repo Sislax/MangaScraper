@@ -17,7 +17,9 @@ namespace MangaScraper.Data.Interfaces
         public Task<IEnumerable<Genere>> GetGeneresAsync();
         public Task<Genere> GetGenereByNameAsync(string name);
         public Task<IEnumerable<MangaToCompare>> GetCapitoliCountForEachMangaAsync();
-        public Task AddMangaAsync(Manga imagePosition);
+        public Task<Capitolo> GetCapitoloWithDataByIdAsync(int capitoloId);
+        public Task<string> GetPathImageByIdAsync(int imgId);
+		public Task AddMangaAsync(Manga imagePosition);
         public Task AddGenereAsync(Genere genere);
         public Task AddRangeAsyncManga(IEnumerable<Manga> mangas);
         public void UpdateManga(Manga imagePosition);

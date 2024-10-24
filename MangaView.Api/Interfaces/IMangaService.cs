@@ -12,5 +12,8 @@ namespace MangaView.Api.Interfaces
         public GenereDTO CreateGenereDTO(Genere genere);
         public Task<MangaDTO> CreateMangaDTOWithData(int id);
         public Task<string> GetCopertinaMangaById(int id);
-    }
+        public Task<Capitolo> GetCapitoloByIdAsync(int capitoloId);
+        public Task<string> GetPathImgAsync(int imgId);
+
+	}
 }

@@ -9,5 +9,10 @@ namespace MangaScraper.Data.Models.DTOs
 		{
 			Id = id;
 		}
-	}
+
+        public ImageDTO()
+        {
+            
+        }
+    }
 }

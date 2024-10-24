@@ -31,4 +31,8 @@ Mi piacerebbe ricevere feedback sull'implementazione e sulla struttura del proge
 
 ## Future implementazioni
 
+- Implementazione funzione di **registrazione** e **login**.
+
 - Implementazione di **Autenticazione** e **Autorizzazione**.
+
+- Aggiungere funzione per effettuare scraping dalla **UI** e non più dalla **console app** se **admin**.

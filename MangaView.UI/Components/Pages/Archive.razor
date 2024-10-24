@@ -1,0 +1,29 @@
+﻿@page "/archive"
+@using MangaScraper.Data.Models.DTOs;
+@using MangaView.UI.Components.Layout
+@using MangaView.UI.Utiles;
+@inject HttpClient _httpClient;
+@inject Settings _settings;
+@inject NavigationManager _navigationManager
+
+<PageTitle>Archive</PageTitle>
+	
+<MudGrid>
+	@foreach(MangaDTO manga in MangaList)
+	{
+		<MudItem xs="12" sm="6">
+			<InfoMangaComponent manga="manga"></InfoMangaComponent>
+		</MudItem>
+	}
+</MudGrid>
+
+@code {
+	private List<MangaDTO> MangaList = new List<MangaDTO>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		MangaList = await _httpClient.GetFromJsonAsync<List<MangaDTO>>(_settings.ApiUrl + "Manga/GetMangaDTOs") ?? throw new Exception();
+
+		await base.OnInitializedAsync();
+	}
+}

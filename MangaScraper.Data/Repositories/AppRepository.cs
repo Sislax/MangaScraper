@@ -37,7 +37,7 @@ namespace MangaScraper.Data.Repositories
         {
             try
             {
-                Manga manga = await _context.Mangas.FirstAsync(m => m.Id == idManga);
+                Manga manga = await _context.Mangas.SingleAsync(m => m.Id == idManga);
 
                 return manga.CopertinaUrl;
             }
@@ -191,6 +191,37 @@ namespace MangaScraper.Data.Repositories
             catch (Exception ex)
             {
                 _logger.LogError("ERRORE: impossibile restituire la lista dei manga con il numero dei loro capitoli. {ex}", ex);
+                throw;
+            }
+        }
+
+        public async Task<Capitolo> GetCapitoloWithDataByIdAsync(int capitoloId)
+        {
+            try
+            {
+                return await _context.Capitolos
+                        .Include(c => c.ImgPositions.OrderBy(i => i.Id))
+                        .AsSplitQuery()
+                        .SingleAsync(c => c.Id == capitoloId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile ottenere il path dell'immagine dal capitoloId: {capitoloId}. {ex}", capitoloId, ex);
+                throw;
+            }
+        }
+
+        public async Task<string> GetPathImageByIdAsync(int imgId)
+        {
+            try
+            {
+                ImagePosition img =  await _context.ImagePositions.SingleAsync(i => i.Id == imgId);
+
+                return img.PathImg;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("ERRORE: impossibile restituire il percorso dell'immagine con id {imgId}. {ex}", imgId, ex);
                 throw;
             }
         }
