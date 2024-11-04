@@ -161,7 +161,7 @@ namespace MangaScraperApi.Services
                     DirectoryInfo copertineFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//Copertine");
 
                     //Scarico la copertina del manga e la salvo nell'apposita cartella
-                    await DownloadImgs(copertinaUrl, copertineFolder.FullName + $"\\{newMangaName}.jpg");
+                    await DownloadImgs(copertinaUrl, copertineFolder.FullName + $"\\{newMangaName}.png");
 
                     //Ottengo il tipo del manga
                     IWebElement div_Tipo = _selenium.FindElementByClassName("genre", mangaInfo);
@@ -247,7 +247,7 @@ namespace MangaScraperApi.Services
                 List<string> urlsCapitoliString = urlsCapitoli.ToList();
 
                 //Dato che "/" non è ammesso nel nome delle cartelle lo sostuisco con "-" 
-                Regex pattern = new Regex("[/]");
+                Regex pattern = new Regex("[/:]");
                 string newMangaName = pattern.Replace(manga.Nome, "-");
 
                 //Dato che i Manhwa non hanno volumi ma solamente capitoli, creo un unico volume fittizio tramite il quale gestisco la relazione con i capitoli
@@ -308,7 +308,7 @@ namespace MangaScraperApi.Services
             {
                 List<string> urlsCapitoliString = urlsCapitoli.ToList();
 
-                Regex pattern = new Regex("[/]");
+                Regex pattern = new Regex("[/:]");
                 string newMangaName = pattern.Replace(manga.Nome, "-");
 
                 for (int i = 0; i < urlsCapitoliString.Count; i++)
@@ -415,7 +415,7 @@ namespace MangaScraperApi.Services
             {
                 List<string> urlsCapitoliString = urlsCapitoli.ToList();
 
-                Regex pattern = new Regex("[/]");
+                Regex pattern = new Regex("[/:]");
                 string newMangaName = pattern.Replace(manga.Nome, "-");
 
                 //Dato che i OneShot non hanno nè volumi nè capitoli ma solamente immagini, creo un unico volume e un unico capitolo fittizi tramite i quali gestisco la relazione
@@ -441,9 +441,6 @@ namespace MangaScraperApi.Services
 
                     //Estraggo il <div> contenente l'immagine perchè esiste un altro elemento con la stessa classe dell'immagine
                     IWebElement imgDiv = _selenium.FindElementById("page", driver);
-
-                    //Estraggo il pulsante da cliccare per cambiare pagina dinamicamente
-                    //IWebElement nextPage = _selenium.FindElementByClassName("page-next", driver);
 
                     for (int j = 0; j < nPagine; j++)
                     {
@@ -557,11 +554,11 @@ namespace MangaScraperApi.Services
                 //Vado sulla home page di goolge e aspetto per l'installazione dell'estensione dell'AdBlock
                 _selenium.GoToUrl("https://www.google.it/", driver);
 
-                wait.Until(d => d.WindowHandles.Count > 1);
-
-                //Dopo l'installazione dell'AdBlock si apre una nuova Tab. Switcho con il driver su quella tab e la chiudo
-                driver.SwitchTo().Window(driver.WindowHandles.Last()).Close();
-                driver.SwitchTo().Window(driver.WindowHandles.First());
+                //wait.Until(d => d.WindowHandles.Count > 1);
+                //
+                ////Dopo l'installazione dell'AdBlock si apre una nuova Tab. Switcho con il driver su quella tab e la chiudo
+                //driver.SwitchTo().Window(driver.WindowHandles.Last()).Close();
+                //driver.SwitchTo().Window(driver.WindowHandles.First());
 
                 driver.Manage().Window.Maximize();
 
