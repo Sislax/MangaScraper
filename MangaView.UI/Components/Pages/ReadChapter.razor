@@ -6,10 +6,17 @@
 
 <PageTitle>Lettura Capitolo</PageTitle>
 
-<MudImage Src="@GetCurrentImage()" Style="align-self: center; align-content: center"></MudImage>
+<MudContainer Class="my-20" Style="display: flex; flex-direction: column; align-items: center; max-width: 100%; width: auto; margin: 0 auto;">
+	<MudItem>
+		<MudImage Src="@GetCurrentImage()" Class="mb-4" Style="max-width: 100%; height: auto;"  />
+	</MudItem>
 
-<MudButton OnClick="() => SelectNextImage()">Next Page</MudButton>
-<MudButton OnClick="() => SelectPrevImage()">Previus Page</MudButton>
+	<MudItem Class="d-flex justify-center my-4">
+		<MudButton OnClick="() => SelectPrevImage()" Class="mx-20">Previus Page</MudButton>
+		<MudButton OnClick="() => SelectNextImage()" Class="mx-20">Next Page</MudButton>
+	</MudItem>
+</MudContainer>
+
 
 @code {
 	[Parameter]
