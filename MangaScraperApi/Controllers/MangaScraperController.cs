@@ -1,8 +1,9 @@
 ﻿using Hangfire;
 using MangaScraperApi.Interfaces.ServiceInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MangaScraperApi.Controllers
+namespace MangaScraper.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -17,6 +18,7 @@ namespace MangaScraperApi.Controllers
         }
 
         [HttpPost("{nPages}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ScrapeUpdate(int nPages)
         {
             // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping (in base alla quantità di pagine) potrebbe durare anche una o due ore

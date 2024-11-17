@@ -21,7 +21,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_capitoloDTO = await _httpClient.GetFromJsonAsync<CapitoloDTO>(_settings.ApiUrl + $"Manga/GetCapitoloDTOWithData?id={capitoloId}") ?? throw new Exception();
+		_capitoloDTO = await _httpClient.GetFromJsonAsync<CapitoloDTO>(_settings.MangaScraperApiUrl + $"Manga/GetCapitoloDTOWithData?id={capitoloId}") ?? throw new Exception();
 		_imageDTO = _capitoloDTO.ImgPositions.First();
 
 		await base.OnInitializedAsync();
@@ -29,7 +29,7 @@
 
 	private string GetCurrentImage()
 	{
-		return _settings.ApiUrl + $"Manga/GetImageFromImageId?id={_imageDTO.Id}";
+		return _settings.MangaScraperApiUrl + $"Manga/GetImageFromImageId?id={_imageDTO.Id}";
 	}
 
 	private void SelectNextImage()

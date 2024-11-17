@@ -52,7 +52,7 @@ namespace MangaView.Api.Controllers
         {
             try
             {
-                string copertinaPath = await _mangaService.GetCopertinaMangaById(id) + ".jpg";
+                string copertinaPath = await _mangaService.GetCopertinaMangaById(id);
 
                 if (!System.IO.File.Exists(copertinaPath))
                 {

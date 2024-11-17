@@ -52,7 +52,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _mangaDTO = await _httpClient.GetFromJsonAsync<MangaDTO>(_settings.ApiUrl + $"Manga/GetMangaDTOWithAllData?id={mangaId}") ?? throw new Exception();
+        _mangaDTO = await _httpClient.GetFromJsonAsync<MangaDTO>(_settings.MangaScraperApiUrl + $"Manga/GetMangaDTOWithAllData?id={mangaId}") ?? throw new Exception();
         _volumeDTO = _mangaDTO.Volumi.First();
         _capitoloDTO = _volumeDTO.Capitoli.First();
 

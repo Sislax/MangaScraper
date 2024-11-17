@@ -22,7 +22,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		MangaList = await _httpClient.GetFromJsonAsync<List<MangaDTO>>(_settings.ApiUrl + "Manga/GetMangaDTOs") ?? throw new Exception();
+		MangaList = await _httpClient.GetFromJsonAsync<List<MangaDTO>>(_settings.MangaScraperApiUrl + "Manga/GetMangaDTOs") ?? throw new Exception();
 
 		await base.OnInitializedAsync();
 	}

@@ -22,6 +22,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaView.Api", "MangaView.
 		{1D5D5F8C-BAE9-48E2-B865-0C94536F0615} = {1D5D5F8C-BAE9-48E2-B865-0C94536F0615}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Api", "AuthService.Api\AuthService.Api.csproj", "{C958405A-98A9-495C-BEC4-0A421E00075A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D5D5F8C-BAE9-48E2-B865-0C94536F0615} = {1D5D5F8C-BAE9-48E2-B865-0C94536F0615}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +53,10 @@ Global
 		{A1FBB655-D11F-45A2-8BCC-C5D342B87E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1FBB655-D11F-45A2-8BCC-C5D342B87E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1FBB655-D11F-45A2-8BCC-C5D342B87E42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C958405A-98A9-495C-BEC4-0A421E00075A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C958405A-98A9-495C-BEC4-0A421E00075A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C958405A-98A9-495C-BEC4-0A421E00075A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C958405A-98A9-495C-BEC4-0A421E00075A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
