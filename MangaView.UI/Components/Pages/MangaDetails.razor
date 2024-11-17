@@ -15,7 +15,7 @@
         @if (_mangaDTO.Volumi.Count != 1 && _volumeDTO.NumVolume != "Volume Fittizio")
         {
             <MudExpansionPanels>
-                <MudExpansionPanel Text="@_volumeDTO.NumVolume" Expanded="false">
+                <MudExpansionPanel Text="@_volumeDTO.NumVolume" Expanded="@isVolumePanelExpanded" ExpandedChanged="@(ev => OnExpandedChanged(ev))">
                     @foreach (VolumeDTO volume in _mangaDTO.Volumi)
                     {
                         <MudLink @onclick="() => SelectCurrentVolume(volume)">@volume.NumVolume</MudLink>
@@ -32,7 +32,14 @@
 
                 @foreach (CapitoloDTO capitolo in _volumeDTO.Capitoli)
                 {
-                    <MudLink @onclick="() => NavigateToChapterPage(capitolo.Id)">@capitolo.NumCapitolo</MudLink>
+                    if(capitolo.NumCapitolo == "Capitolo Fittizio")
+                    {
+                        <MudLink @onclick="() => NavigateToChapterPage(capitolo.Id)">OneShot</MudLink>
+                    }
+                    else
+                    {
+                        <MudLink @onclick="() => NavigateToChapterPage(capitolo.Id)">@capitolo.NumCapitolo</MudLink>
+                    }
                     <MudDivider />
                 }
             </MudExpansionPanel>
@@ -49,6 +56,7 @@
     public required MangaDTO _mangaDTO = new MangaDTO();
     public required VolumeDTO _volumeDTO = new VolumeDTO();
     public required CapitoloDTO _capitoloDTO = new CapitoloDTO();
+    public bool isVolumePanelExpanded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,9 +67,18 @@
         await base.OnInitializedAsync();
     }
 
+    private void OnExpandedChanged(bool expanded)
+    {
+        isVolumePanelExpanded = expanded;
+    }
+
     private void SelectCurrentVolume(VolumeDTO selectedVolume)
     {
         _volumeDTO = selectedVolume;
+
+        _capitoloDTO = _volumeDTO.Capitoli.First();
+
+        isVolumePanelExpanded = false;
     }
 
     private void NavigateToChapterPage(int chapterId)
