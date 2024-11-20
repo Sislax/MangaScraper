@@ -1,9 +1,8 @@
 ﻿@page "/{mangaId:int}"
 @using MangaScraper.Data.Models.DTOs;
 @using MangaView.UI.Components.Layout
-@using MangaView.UI.Utiles
-@inject HttpClient _httpClient;
-@inject Settings _settings;
+@using MangaView.UI.Interfaces
+@inject IScraperApiHttpClient _scraperApiHttpClient;
 @inject NavigationManager _navigationManager;
 
 <PageTitle>Manga Details</PageTitle>
@@ -60,7 +59,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _mangaDTO = await _httpClient.GetFromJsonAsync<MangaDTO>(_settings.MangaScraperApiUrl + $"Manga/GetMangaDTOWithAllData?id={mangaId}") ?? throw new Exception();
+        _mangaDTO = await _scraperApiHttpClient.GetMangaDTOWithAllData(mangaId);
         _volumeDTO = _mangaDTO.Volumi.First();
         _capitoloDTO = _volumeDTO.Capitoli.First();
 

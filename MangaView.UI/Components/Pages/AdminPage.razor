@@ -1,0 +1,59 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+@using MangaScraper.Data.Models.Auth
+@using MangaView.UI.Utiles
+@using Microsoft.AspNetCore.Authorization
+@using System.Text
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Newtonsoft.Json
+@using System.Net.Http.Headers
+@inject Settings _settings;
+@inject HttpClient _httpClient;
+@inject ProtectedLocalStorage _localStorage;
+
+<MudItem xs="12" sm="7" Style="align-content: center">
+    <MudNumericField @bind-Value="NPagine" Label="Filled" Variant="Variant.Filled" Min="1" Max="176" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="RequestUpdate">Inizia lo scraping</MudButton>
+</MudItem>
+
+<MudItem xs="12" sm="7" Style="align-content: center">
+    <MudText Style="align">@Response</MudText>
+</MudItem>
+
+@code {
+    public string Response { get; set; } = "";
+    public int NPagine { get; set; } = 0;
+
+    public async Task RequestUpdate()
+    {
+        if(NPagine <= 0)
+        {
+            Response = "Inserire un numero di pagine per il quale effettuare lo scraping. Il minimo è 1 e il massimo è 176";
+            return;
+        }
+
+        string url = _settings.MangaScraperApiUrl + "MangaScraper/ScrapeUpdate";
+
+        string jsonBody = NPagine.ToString();
+
+        HttpContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+        LoginResponse sessionState = (await _localStorage.GetAsync<LoginResponse>("SessionState")).Value!;
+
+        if (sessionState != null && !string.IsNullOrEmpty(sessionState.JwtToken))
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionState.JwtToken);
+
+            HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Response = $"Status Code risposta API: {response.StatusCode.ToString()}";
+            }
+            else
+            {
+                Response = $"Errore nella chiamata API: {response.StatusCode.ToString()}";
+            }
+        }
+    }
+}

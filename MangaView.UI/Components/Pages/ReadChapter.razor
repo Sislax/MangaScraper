@@ -1,8 +1,7 @@
 ﻿@page "/read/{capitoloId:int}"
 @using MangaScraper.Data.Models.DTOs
-@using MangaView.UI.Utiles
-@inject HttpClient _httpClient;
-@inject Settings _settings;
+@using MangaView.UI.Interfaces
+@inject IScraperApiHttpClient _scraperApiHttpClient;
 
 <PageTitle>Lettura Capitolo</PageTitle>
 
@@ -12,8 +11,8 @@
 	</MudItem>
 
 	<MudItem Class="d-flex justify-center my-4">
-		<MudButton OnClick="() => SelectPrevImage()" Class="mx-20">Previus Page</MudButton>
-		<MudButton OnClick="() => SelectNextImage()" Class="mx-20">Next Page</MudButton>
+		<MudButton onclick="SelectPrevImage" Class="mx-20">Previus Page</MudButton>
+		<MudButton onclick="SelectNextImage" Class="mx-20">Next Page</MudButton>
 	</MudItem>
 </MudContainer>
 
@@ -28,7 +27,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_capitoloDTO = await _httpClient.GetFromJsonAsync<CapitoloDTO>(_settings.MangaScraperApiUrl + $"Manga/GetCapitoloDTOWithData?id={capitoloId}") ?? throw new Exception();
+		_capitoloDTO = await _scraperApiHttpClient.GetCapitoloDTOWithData(capitoloId);
 		_imageDTO = _capitoloDTO.ImgPositions.First();
 
 		await base.OnInitializedAsync();
@@ -36,7 +35,7 @@
 
 	private string GetCurrentImage()
 	{
-		return _settings.MangaScraperApiUrl + $"Manga/GetImageFromImageId?id={_imageDTO.Id}";
+		return _scraperApiHttpClient.GetCurrentImage(_imageDTO.Id);
 	}
 
 	private void SelectNextImage()

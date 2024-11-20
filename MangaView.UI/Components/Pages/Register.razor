@@ -1,0 +1,63 @@
+﻿@page "/register"
+@using MangaScraper.Data.Models.Auth
+@using System.Text.RegularExpressions
+@using MangaView.UI.Interfaces
+@using MangaView.UI.Utiles
+@inject IAuthApiHttpClient _httpClient;
+
+<MudGrid>
+	<MudItem xs="12" sm="7">
+		<MudForm>
+			<MudTextField T="string" Label="Username" @bind-Value="Username" Required="true" RequiredError="Inserire l'username!" />
+			<MudTextField T="string" Label="Email" @bind-Value="Email" Required="true" RequiredError="Inserire l'email!" />
+			<MudTextField T="string" Label="Password" InputType="InputType.Password" RequiredError="Inserire la password!" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrenth))" />
+			<MudTextField T="string" Label="Ripetere la password" InputType="InputType.Password" Validation="@(new Func<string, string>(PasswordMatch))" />
+			<div class="d-flex align-center justify-space-between">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" onclick="() => RegisterAsync()">Register</MudButton>
+			</div>
+		</MudForm>
+	</MudItem>
+</MudGrid>
+
+@code {
+	private string Username { get; set; } = null!;
+	private string Email { get; set; } = null!;
+	private string Password { get; set; } = null!;
+
+	private IEnumerable<string> PasswordStrenth(string pw)
+	{
+		if (string.IsNullOrWhiteSpace(pw))
+		{
+			yield return "Password is required!";
+			yield break;
+		}
+		if (pw.Length < 8)
+			yield return "La password dev'essere lunga almeno 8 caratteri";
+		if (!Regex.IsMatch(pw, @"[A-Z]"))
+			yield return "La password deve contenere almeno una lettera maiuscola";
+		if (!Regex.IsMatch(pw, @"[a-z]"))
+			yield return "La password deve contenere almeno una lettera minuscola";
+		if (!Regex.IsMatch(pw, @"[0-9]"))
+			yield return "La password deve contenere almeno un numero";
+	}
+
+	private string PasswordMatch(string pw)
+	{
+		if (Password != pw)
+			return "Le password non corrispondono";
+		return null!;
+	}
+
+	private async Task<string> RegisterAsync()
+	{
+		//INSERIRE CONTROLLI PER VALIDITà DATI PRIMA DI ESEGUIRE IL METODO RegisterUserAsync()
+
+		return await _httpClient.RegisterUserAsync(
+			new RegistrationUser
+				{
+					UserName = this.Username,
+					Email = this.Email,
+					Password = this.Password
+				});
+	}
+}

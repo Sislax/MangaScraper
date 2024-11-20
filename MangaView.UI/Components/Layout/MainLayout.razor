@@ -5,28 +5,30 @@
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-<MudLayout>
-    <MudAppBar Fixed="false">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudSpacer/>
-        <div style="display: flex; justify-content: flex-start; align-items: center;">
-            <input type="text" name="search-bar" placeholder=" Cerca..." @bind-value="_text" style="width: 280px; height: 30px; border-radius: 2px" />
-            <MudIconButton Icon="@Icons.Material.Filled.Search" />
-        </div>
-        
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
-    </MudDrawer>
-
-    <MudThemeProvider Theme="MyTheme" />
-
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex justify-center">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+<CascadingAuthenticationState>
+    <MudLayout>
+        <MudAppBar Fixed="false">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudSpacer/>
+            <div style="display: flex; justify-content: flex-start; align-items: center;">
+                <input type="text" name="search-bar" placeholder=" Cerca..." @bind-value="_text" style="width: 280px; height: 30px; border-radius: 2px" />
+                <MudIconButton Icon="@Icons.Material.Filled.Search" />
+            </div>
+            
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen">
+            <NavMenu/>
+        </MudDrawer>
+    
+        <MudThemeProvider Theme="MyTheme" />
+    
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex justify-center">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+</CascadingAuthenticationState>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

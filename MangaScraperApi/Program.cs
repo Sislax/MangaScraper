@@ -29,31 +29,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-//Registrazione dell'Identity System -> IMPORTANTE, CONTROLLARE SE SERVE, EVITARE DI INIETTARE QUESTO COME DIPENDENZA
-//builder.Services.AddIdentity<User, Role>(options =>
-//    {
-//        options.SignIn.RequireConfirmedAccount = true;
-//    
-//        //Password Settings
-//        options.Password.RequireDigit = true;
-//        options.Password.RequireLowercase = true;
-//        options.Password.RequireUppercase = true;
-//        options.Password.RequireNonAlphanumeric = true;
-//        options.Password.RequiredLength = 8;
-//        options.Password.RequiredUniqueChars = 4;
-//    
-//        //Lockout Settings
-//        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-//        options.Lockout.MaxFailedAccessAttempts = 7;
-//        options.Lockout.AllowedForNewUsers = true;
-//    
-//        //User Settings
-//        options.User.AllowedUserNameCharacters =
-//            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.:,;^?=)(&%$£!|";
-//    })
-//    .AddEntityFrameworkStores<UserIdentityDbContext>()
-//    .AddDefaultTokenProviders();
-
 //Registrazione del servizio di Autenticazione -> IMPORTANTE, CONTROLLARE SE SERVE, EVITARE DI INIETTARE QUESTO COME DIPENDENZA
 builder.Services.AddAuthentication(options =>
 {
@@ -64,10 +39,12 @@ builder.Services.AddAuthentication(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            RequireExpirationTime = true,
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
             ValidIssuer = configuration.GetSection("JwtSettings").GetValue<string>("Issuer"),
             ValidAudience = configuration.GetSection("JwtSettings").GetValue<string>("Audience"),
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -110,9 +87,9 @@ app.UseHangfireDashboard("/hangfire");
 
 app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.UseAuthentication();
 
-//app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
     //.RequireAuthorization();

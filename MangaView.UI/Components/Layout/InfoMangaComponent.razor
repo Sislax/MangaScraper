@@ -1,7 +1,8 @@
 ﻿@using MangaScraper.Data.Models.DTOs;
+@using MangaView.UI.Interfaces
 @using MangaView.UI.Utiles
 @inject NavigationManager _navigationManager;
-@inject Settings _settings;
+@inject IScraperApiHttpClient _scraperApiHttpClient;
 
 
 <MudPaper Class="d-flex justify-center mud-width-full py-8" Style="max-width: 444px; height: 500px">
@@ -35,6 +36,6 @@
 
 	private string GetCopertina(int id)
 	{
-		return _settings.MangaScraperApiUrl + $"Manga/GetCopertina?id={id}";
+		return _scraperApiHttpClient.GetCopertina(id);
 	}
 }

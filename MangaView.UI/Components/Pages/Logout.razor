@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@using MangaView.UI.Services
+@inject CustomAuthStateProvider _customAuthStateProvider;
+@inject NavigationManager _navigationManager;
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await _customAuthStateProvider.NotifyUserLogout();
+		await base.OnInitializedAsync();
+		_navigationManager.NavigateTo("/");
+	}
+}
+}

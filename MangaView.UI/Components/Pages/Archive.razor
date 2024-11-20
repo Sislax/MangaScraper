@@ -1,13 +1,12 @@
 ﻿@page "/archive"
 @using MangaScraper.Data.Models.DTOs;
 @using MangaView.UI.Components.Layout
-@using MangaView.UI.Utiles;
-@inject HttpClient _httpClient;
-@inject Settings _settings;
+@using MangaView.UI.Interfaces
+@inject IScraperApiHttpClient _scraperApiHttpClient;
 @inject NavigationManager _navigationManager
 
 <PageTitle>Archive</PageTitle>
-	
+
 <MudGrid>
 	@foreach(MangaDTO manga in MangaList)
 	{
@@ -22,7 +21,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		MangaList = await _httpClient.GetFromJsonAsync<List<MangaDTO>>(_settings.MangaScraperApiUrl + "Manga/GetMangaDTOs") ?? throw new Exception();
+		MangaList = await _scraperApiHttpClient.GetMangaDTOs();
 
 		await base.OnInitializedAsync();
 	}

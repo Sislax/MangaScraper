@@ -39,7 +39,7 @@ namespace MangaScraper.Data.Repositories
             {
                 Manga manga = await _context.Mangas.SingleAsync(m => m.Id == idManga);
 
-                return manga.CopertinaUrl;
+                return manga.CopertinaUrl + ".jpg";
             }
             catch (Exception ex)
             {

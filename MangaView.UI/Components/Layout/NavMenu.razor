@@ -4,7 +4,30 @@
 
     <MudNavLink Href="/archive" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.LibraryBooks" IconColor="Color.Success">Archive</MudNavLink>
 
-    <MudNavLink Href="/user" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">User Page</MudNavLink>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
 
+                <MudNavLink Href="/admin" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AdminPanelSettings" IconColor="Color.Success">Admin Page</MudNavLink>
+
+            </Authorized>
+        </AuthorizeView>
+
+    <MudNavGroup Title="User" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">
+        
+        <AuthorizeView Roles="Admin, User">
+            <NotAuthorized>
+
+                <MudNavLink Href="/login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login" IconColor="Color.Success">Login</MudNavLink>
+
+            </NotAuthorized>
+            <Authorized>
+
+                <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Success">Logout</MudNavLink>
+
+            </Authorized>
+        </AuthorizeView>
+
+    </MudNavGroup>
+        
 </MudNavMenu>
 

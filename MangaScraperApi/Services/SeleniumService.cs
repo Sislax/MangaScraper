@@ -45,8 +45,6 @@ namespace MangaScraperApi.Services
                 //options.AddArgument("--headless");
                 options.AddArgument("--no-sandbox");
                 options.AddArgument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36");
-
-                //Per qualche motivo ricevo in console errori sul certificato anche se la connessione è sicura.
                 //options.AcceptInsecureCertificates = true;
 
                 return options;

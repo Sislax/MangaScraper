@@ -1,5 +1,6 @@
 using AuthService.Api.Interfaces;
 using AuthService.Api.Models;
+using AuthService.Api.Models.Settings;
 using MangaScraper.Data.Data;
 using MangaScraper.Data.Models.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,11 +23,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Registrazione del DbContext
-builder.Services.AddDbContext<AppDbContext>(o =>
+builder.Services.AddDbContext<UserIdentityDbContext>(o =>
     o.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 //Registrazione dell'Identity System
-builder.Services.AddIdentity<User, Role>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = true;
 
@@ -82,7 +83,8 @@ builder.Services.AddLogging(logging =>
         options.TimestampFormat = "yyyy/MM/d HH:mm:ss:fff";
     }));
 
-
+builder.Services.AddSingleton(configuration);
+builder.Services.AddSingleton<Settings>();
 builder.Services.AddScoped<IAuthService, AuthService.Api.Services.AuthService>();
 var app = builder.Build();
 

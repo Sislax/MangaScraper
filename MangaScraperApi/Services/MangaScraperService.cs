@@ -161,7 +161,7 @@ namespace MangaScraperApi.Services
                     DirectoryInfo copertineFolder = Directory.CreateDirectory(_settings.FolderForImages + $"//Copertine");
 
                     //Scarico la copertina del manga e la salvo nell'apposita cartella
-                    await DownloadImgs(copertinaUrl, copertineFolder.FullName + $"\\{newMangaName}.png");
+                    await DownloadImgs(copertinaUrl, copertineFolder.FullName + $"\\{newMangaName}.jpg");
 
                     //Ottengo il tipo del manga
                     IWebElement div_Tipo = _selenium.FindElementByClassName("genre", mangaInfo);
@@ -553,6 +553,8 @@ namespace MangaScraperApi.Services
 
                 //Vado sulla home page di goolge e aspetto per l'installazione dell'estensione dell'AdBlock
                 _selenium.GoToUrl("https://www.google.it/", driver);
+
+                //Decommentare se all'avvio del web driver e dopo l'installazione dell'adblock, viene aperta una nuova scheda
 
                 //wait.Until(d => d.WindowHandles.Count > 1);
                 //

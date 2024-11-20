@@ -1,22 +1,19 @@
 ﻿using AuthService.Api.Interfaces;
-using AuthService.Api.Models.Settings;
 using MangaScraper.Data.Models.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Api.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly Settings _settings;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService, Settings settings, ILogger<AuthController> logger)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
-            _settings = settings;
             _logger = logger;
         }
 
@@ -41,25 +38,20 @@ namespace AuthService.Api.Controllers
 
             LoginResponse loginResponse = await _authService.LoginAsync(credentials);
 
-            if (loginResponse.IsLoggedIn)
-            {
-                return Ok(loginResponse);
-            }
-
-            return Unauthorized();
+            return Ok(loginResponse);
         }
 
-        [HttpPost("RefreshToken")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenModel refreshTokenModel)
+        [HttpPost("RefreshTokenAndLogin")]
+        public async Task<IActionResult> RefreshTokenAndLogin(string refreshTokenModel)
         {
-            LoginResponse loginResult = await _authService.SetUserRefreshToken(refreshTokenModel);
+            LoginResponse response = await _authService.RefreshTokenExist(refreshTokenModel);
 
-            if (loginResult.IsLoggedIn)
+            if(response == null)
             {
-                return Ok(loginResult);
+                return BadRequest();
             }
 
-            return Unauthorized();
+            return Ok(response);
         }
     }
 }

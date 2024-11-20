@@ -3,6 +3,7 @@ using AuthService.Api.Models.Settings;
 using MangaScraper.Data.Data;
 using MangaScraper.Data.Models.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,17 +15,15 @@ namespace AuthService.Api.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserIdentityDbContext _context;
         private readonly Settings _settings;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, UserIdentityDbContext context, Settings settings, ILogger<AuthService> logger)
+        public AuthService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, UserIdentityDbContext context, Settings settings, ILogger<AuthService> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _signInManager = signInManager;
             _context = context;
             _settings = settings;
             _logger = logger;
@@ -35,6 +34,9 @@ namespace AuthService.Api.Services
             User user = new User(userData.UserName, userData.Email);
 
             var result = await _userManager.CreateAsync(user, userData.Password);
+
+            await _context.SaveChangesAsync();
+
             return result.Succeeded;
         }
 
@@ -49,15 +51,18 @@ namespace AuthService.Api.Services
                     return new LoginResponse();
                 }
 
-                LoginResponse response = new LoginResponse(await GenerateJwtTokenAsync(user), GenerateRefreshTokenAsync())
-                                         {
-                                             IsLoggedIn = true
-                                         };
+                string newRefreshToken = GenerateRefreshToken();
 
-                user.RefreshToken = response.RefreshToken;
+                user.RefreshToken = newRefreshToken;
                 user.RefreshTokenExpiration = DateTime.Now.AddHours(24);
 
+                LoginResponse response = new LoginResponse(await GenerateJwtTokenAsync(user), newRefreshToken, user.RefreshTokenExpiration);
+
+                response.TokenExpired = user.RefreshTokenExpiration;
+
                 await _userManager.UpdateAsync(user);
+
+                await _context.SaveChangesAsync();
 
                 return response;
             }
@@ -83,12 +88,11 @@ namespace AuthService.Api.Services
                 claims.AddRange(await _userManager.GetClaimsAsync(user!));
                 IList<string> roles = await _userManager.GetRolesAsync(user!);
 
-                // Per ogni role dello user trovo i claims e li aggiungo alla lista di claim
                 foreach (string role in roles)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role));
 
-                    Role? identityRole = await _roleManager.FindByNameAsync(role);
+                    IdentityRole? identityRole = await _roleManager.FindByNameAsync(role);
                     claims.AddRange(await _roleManager.GetClaimsAsync(identityRole!));
                 }
 
@@ -127,7 +131,7 @@ namespace AuthService.Api.Services
             }
         }
         
-        private string GenerateRefreshTokenAsync()
+        private string GenerateRefreshToken()
         {
             try
             {
@@ -147,50 +151,25 @@ namespace AuthService.Api.Services
             }
         }
 
-        public async Task<LoginResponse> SetUserRefreshToken(RefreshTokenModel refreshTokenModel)
+        public async Task<LoginResponse> RefreshTokenExist(string refreshToken)
         {
-            ClaimsPrincipal principal = GetTokenPrincipal(refreshTokenModel.JwtToken);
+            User? user = await _userManager.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
 
-            if(principal?.Identity?.Name is null)
+            if(user == null)
             {
                 return new LoginResponse();
             }
 
-            User? user = await _userManager.FindByNameAsync(principal.Identity.Name);
+            string newRefreshToken = GenerateRefreshToken();
 
-            if (user is null || user.RefreshToken != refreshTokenModel.RefreshToken || user.RefreshTokenExpiration > DateTime.Now)
-            {
-                return new LoginResponse();
-            }
-
-            LoginResponse response = new LoginResponse(await GenerateJwtTokenAsync(user), GenerateRefreshTokenAsync())
-            {
-                IsLoggedIn = true
-            };
-
-            user.RefreshToken = response.RefreshToken;
-            user.RefreshTokenExpiration = DateTime.Now.AddHours(24);
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiration = DateTime.Now;
 
             await _userManager.UpdateAsync(user);
 
-            return response;
-        }
+            await _context.SaveChangesAsync();
 
-        private ClaimsPrincipal GetTokenPrincipal(string jwtToken)
-        {
-            TokenValidationParameters validation = new TokenValidationParameters
-            {
-                RequireExpirationTime = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = _settings.Issuer,
-                ValidAudience = _settings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey))
-            };
-
-            return new JwtSecurityTokenHandler().ValidateToken(jwtToken, validation, out _);
+            return new LoginResponse(await GenerateJwtTokenAsync(user), newRefreshToken, user.RefreshTokenExpiration);
         }
     }
 }

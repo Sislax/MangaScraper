@@ -13,11 +13,11 @@ namespace AuthService.Api.Models
                 // Ottengo i servizi necessari
                 UserIdentityDbContext context = scope.ServiceProvider.GetService<UserIdentityDbContext>()!;
                 UserManager<User> userManager = scope.ServiceProvider.GetService<UserManager<User>>()!;
-                RoleManager<Role> roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>()!;
+                RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>()!;
 
                 // Creo i ruoli
-                Role roleAdmin = new Role("Admin");
-                Role roleUser = new Role("User");
+                IdentityRole roleAdmin = new IdentityRole("Admin");
+                IdentityRole roleUser = new IdentityRole("User");
 
                 // Aggiungo i ruoli
                 await roleManager.CreateAsync(roleAdmin);

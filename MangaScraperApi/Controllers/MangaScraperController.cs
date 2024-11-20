@@ -17,11 +17,12 @@ namespace MangaScraper.Api.Controllers
             _logger = logger;
         }
 
-        [HttpPost("{nPages}")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult ScrapeUpdate(int nPages)
+        //[AutomaticRetry(Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
+        public IActionResult ScrapeUpdate([FromBody] int nPages)
         {
-            // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping (in base alla quantità di pagine) potrebbe durare anche una o due ore
+            // Tramite Hangfire imposto l'esecuzione in background dato che lo scraping dura molto tempo
             BackgroundJob.Enqueue(() => ScrapeUpdateTask(nPages));
 
             return Accepted();
@@ -29,6 +30,8 @@ namespace MangaScraper.Api.Controllers
 
         // Il metodo deve per forza essere public per essere eseguito in background quindi lo faccio ignorare da Swagger
         [ApiExplorerSettings(IgnoreApi = true)]
+        //Da usare solo in fase di sviluppo per non fare i retry quando si interrompe l'esecuzione del job
+        [AutomaticRetry(Attempts = 0, OnAttemptsExceeded = Hangfire.AttemptsExceededAction.Delete)]
         public async Task ScrapeUpdateTask(int nPages)
         {
             try

@@ -6,6 +6,7 @@ namespace AuthService.Api.Interfaces
     {
         Task<bool> RegisterAsync(RegistrationUser userData);
         Task<LoginResponse> LoginAsync(LoginUser user);
-        Task<LoginResponse> SetUserRefreshToken(RefreshTokenModel refreshTokenModel);
+        //Task<LoginResponse> SetUserRefreshToken(RefreshTokenModel refreshTokenModel);
+        Task<LoginResponse> RefreshTokenExist(string refreshToken);
     }
 }
